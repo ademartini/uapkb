@@ -1,0 +1,12 @@
+---
+description: TypeScript and React conventions for UAPKB
+globs: "**/*.{ts,tsx}"
+alwaysApply: false
+---
+
+# TypeScript / React
+
+- Keep route handlers thin; put logic in `lib/` with collocated tests.
+- No `*.test.tsx` under `app/` — use `tests/` for page-level tests.
+- Use `@/` imports matching `tsconfig.json` paths.
+- Do not add ORM or domain features — this is a reference scaffold.

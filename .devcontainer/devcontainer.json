@@ -1,0 +1,35 @@
+{
+  "name": "uapkb",
+  "dockerComposeFile": "../docker-compose.yml",
+  "service": "dev",
+  "workspaceFolder": "/workspaces/uapkb",
+  "features": {
+    "ghcr.io/devcontainers-extra/features/pnpm@sha256:694c2b6182435c9e9c06f6071728b087c1181b38c18cecf0defe2ab8c11cddd6": {
+      "version": "10"
+    }
+  },
+  "remoteUser": "node",
+  "mounts": ["source=cursor-config-${devcontainerId},target=/home/node/.cursor,type=volume"],
+  "updateContentCommand": "pnpm install --frozen-lockfile",
+  "onCreateCommand": "curl https://cursor.com/install -fsS | bash",
+  "postCreateCommand": "sudo chown -R node:node /home/node/.cursor",
+  "forwardPorts": [3000, 5432],
+  "portsAttributes": {
+    "3000": {
+      "label": "Next.js dev server",
+      "onAutoForward": "openPreview"
+    },
+    "5432": {
+      "label": "Postgres"
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "bradlc.vscode-tailwindcss"
+      ]
+    }
+  }
+}

@@ -1,0 +1,14 @@
+Dockerfile
+.dockerignore
+node_modules
+.next
+.git
+.github
+.env*
+coverage
+playwright-report
+test-results
+e2e
+docs
+*.md
+!README.md

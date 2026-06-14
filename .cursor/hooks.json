@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "hooks": {
+    "afterFileEdit": [
+      {
+        "command": "pnpm exec prettier --write --ignore-unknown \"$CURSOR_FILE_PATH\" && pnpm exec eslint --fix --no-warn-ignored --no-error-on-unmatched-pattern \"$CURSOR_FILE_PATH\""
+      }
+    ],
+    "stop": [
+      {
+        "command": "./scripts/check.sh"
+      }
+    ]
+  }
+}

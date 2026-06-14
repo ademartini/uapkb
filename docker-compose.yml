@@ -1,0 +1,28 @@
+services:
+  dev:
+    image: mcr.microsoft.com/devcontainers/javascript-node:1-22-bookworm
+    volumes:
+      - ..:/workspaces/uapkb:cached
+    command: sleep infinity
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgres://uapkb:uapkb@db:5432/uapkb
+
+  db:
+    image: postgres:16.8
+    environment:
+      POSTGRES_USER: uapkb
+      POSTGRES_PASSWORD: uapkb
+      POSTGRES_DB: uapkb
+    volumes:
+      - uapkb-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U uapkb -d uapkb"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  uapkb-postgres-data:

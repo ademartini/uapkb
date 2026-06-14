@@ -1,0 +1,60 @@
+{
+  "name": "uapkb",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "pnpm@10.18.3",
+  "engines": {
+    "node": "22.x"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint --max-warnings 0",
+    "lint:fix": "eslint --fix --max-warnings 0",
+    "lint:suppress": "eslint --suppress-all",
+    "lint:prune-suppressions": "eslint --prune-suppressions",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "coverage:diff": "node scripts/check-diff-coverage.mjs",
+    "coverage:update": "vitest run --coverage && prettier --write vitest.config.ts",
+    "test:smoke": "playwright test --grep @smoke",
+    "check": "./scripts/check.sh",
+    "prepare": "husky",
+    "audit:ci": "pnpm audit --audit-level high"
+  },
+  "dependencies": {
+    "next": "16.2.9",
+    "pino": "9.6.0",
+    "react": "19.2.4",
+    "react-dom": "19.2.4"
+  },
+  "devDependencies": {
+    "@friedemannsommer/lcov-parser": "6.0.0",
+    "@playwright/test": "1.60.0",
+    "@tailwindcss/postcss": "4.3.1",
+    "@testing-library/jest-dom": "6.9.1",
+    "@testing-library/react": "16.3.2",
+    "@types/node": "22.15.21",
+    "@types/react": "19.2.17",
+    "@types/react-dom": "19.2.3",
+    "@vitejs/plugin-react": "6.0.2",
+    "@vitest/coverage-v8": "4.1.7",
+    "eslint": "9.39.4",
+    "eslint-config-next": "16.2.9",
+    "eslint-config-prettier": "10.1.8",
+    "husky": "9.1.7",
+    "jsdom": "29.1.1",
+    "lint-staged": "16.1.0",
+    "pino-pretty": "13.0.0",
+    "prettier": "3.5.3",
+    "tailwindcss": "4.3.1",
+    "typescript": "5.9.3",
+    "vite": "8.0.14",
+    "vitest": "4.1.7"
+  }
+}
