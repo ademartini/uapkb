@@ -24,20 +24,20 @@ jobs:
       digest: ${{ steps.build.outputs.digest }}
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
-      - uses: docker/setup-buildx-action@e468f50481deecd88f693797f6afed40781d3274 # v3.11.1
-      - uses: docker/login-action@5e57cd08717262b802d6e5c461abe2631e27407a # v3.6.0
+      - uses: docker/setup-buildx-action@e468171a9de216ec08956ac3ada2f0791b6bd435 # v3.11.1
+      - uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef # v3.6.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - id: meta
-        uses: docker/metadata-action@8e5442f4cb87d13b65d3a4e837e5cdd263dc3de9 # v5.7.0
+        uses: docker/metadata-action@902fa8ec7d6ecbf8d84d538b9b233a880e428804 # v5.7.0
         with:
           images: ghcr.io/${{ github.repository }}
           tags: |
             type=sha,prefix=
       - id: build
-        uses: docker/build-push-action@14487c292dc2b3f778baed4c0e421c0e62025c9a # v6.18.0
+        uses: docker/build-push-action@263435318d21b8e681c14492fe198d362a7d2c83 # v6.18.0
         with:
           context: .
           push: true

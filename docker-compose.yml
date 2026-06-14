@@ -1,8 +1,6 @@
 services:
   dev:
     image: mcr.microsoft.com/devcontainers/javascript-node:1-22-bookworm
-    volumes:
-      - ..:/workspaces/uapkb:cached
     command: sleep infinity
     depends_on:
       db:
