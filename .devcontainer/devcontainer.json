@@ -1,8 +1,6 @@
 {
   "name": "uapkb",
   "image": "mcr.microsoft.com/devcontainers/javascript-node:1-22-bookworm",
-  "dockerComposeFile": "../docker-compose.yml",
-  "runServices": ["db"],
   "features": {
     "ghcr.io/devcontainers-extra/features/pnpm@sha256:694c2b6182435c9e9c06f6071728b087c1181b38c18cecf0defe2ab8c11cddd6": {
       "version": "10"
@@ -19,11 +17,8 @@
       "onAutoForward": "openPreview"
     },
     "5432": {
-      "label": "Postgres"
+      "label": "Postgres (host: docker compose up -d db)"
     }
-  },
-  "remoteEnv": {
-    "DATABASE_URL": "postgres://uapkb:uapkb@db:5432/uapkb"
   },
   "customizations": {
     "vscode": {
