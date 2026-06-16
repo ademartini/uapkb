@@ -17,6 +17,10 @@
 - `pnpm test:coverage` — v8 coverage + lcov (CI)
 - `pnpm test:smoke` — Playwright `@smoke` subset
 
+## Hook checks
+
+Agent file edits run the project `afterFileEdit` hook, which formats the touched file before the end-of-turn gate runs.
+
 ## Coverage excludes
 
 Route shells excluded from coverage denominator: `layout.tsx`, `loading.tsx`, `error.tsx`, `not-found.tsx`.
