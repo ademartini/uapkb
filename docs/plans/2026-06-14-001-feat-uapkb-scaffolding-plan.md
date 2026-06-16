@@ -10,7 +10,7 @@ origin: docs/brainstorms/2026-06-13-uapkb-scaffolding-requirements.md
 
 ## Execution Progress
 
-**Last updated:** 2026-06-16
+**Last updated:** 2026-06-16 (post-shipping session)
 
 **Repository:** https://github.com/ademartini/uapkb — scaffold merged via [PR #1](https://github.com/ademartini/uapkb/pull/1) (`feat/uapkb-scaffolding` → `main`, 2026-06-16).
 
@@ -27,30 +27,29 @@ origin: docs/brainstorms/2026-06-13-uapkb-scaffolding-requirements.md
 
 **CI fixes landed in PR:** invalid Docker action SHAs; devcontainer switched from compose-embedded `dev` service to image-only (matches `xplor-test-app` pattern). Postgres remains `docker compose up -d db` for local dev.
 
-### Post-merge gaps (not done — start here next session)
+### Post-merge gaps (resolved 2026-06-16)
 
-| Item                        | Status                | Detail                                                                                                                                                                                                                                                                                  |
-| --------------------------- | --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Deploy workflow**         | **Failing on `main`** | `superfly/flyctl-actions/setup-flyctl` SHA pin is invalid (`63de32d…`). Fix pin, re-run deploy.                                                                                                                                                                                         |
-| **GHCR devcontainer cache** | **Failing on `main`** | `devcontainer-build` job cannot push to `ghcr.io/ademartini/uapkb/devcontainer` (`unauthorized`). Likely needs repo **Settings → Actions → General → Workflow permissions → Read and write**, or a PAT with `write:packages`. Non-blocking for app deploy but blocks CI cache prebuild. |
-| **fly.io apps**             | **Manual**            | Create `uapkb-staging` and `uapkb-production` (`fly apps create`). User configured GitHub Environment secrets for deploy tokens (step 4).                                                                                                                                               |
-| **GHCR app image public**   | **Manual (step 5)**   | After first successful `build-image` job, set `ghcr.io/ademartini/uapkb` package visibility to **Public** so fly can pull deploy images.                                                                                                                                                |
-| **First deploy + smoke**    | **Not proven**        | Merge triggered deploy but it failed before staging; production not reached.                                                                                                                                                                                                            |
-| **Neon / real DB**          | **Deferred**          | `DATABASE_URL` placeholder only; `/healthz` reports `not_configured`.                                                                                                                                                                                                                   |
+| Item                        | Status       | Detail                                                                                                                                                                                                                                                                                                      |
+| --------------------------- | ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Deploy workflow**         | **Fixed**    | Invalid `setup-flyctl` SHA (`63de32d…` → `fc53c09e…` v1.5). Deploy now uses build-image **digest** (not full git SHA tag). `deploy-production` needs `[smoke, build-image]` so digest output is in scope. [Run 27650189224](https://github.com/ademartini/uapkb/actions/runs/27650189224) green end-to-end. |
+| **GHCR devcontainer cache** | **Fixed**    | Repo workflow permissions set to read/write; `docker/login-action` added before `devcontainers/ci` push. Devcontainer prebuild push succeeds on `main`.                                                                                                                                                     |
+| **fly.io apps**             | **Verified** | `uapkb-staging` and `uapkb-production` exist; staging and production deployed.                                                                                                                                                                                                                              |
+| **GHCR app image public**   | **Verified** | `ghcr.io/ademartini/uapkb` package is **Public** (required for fly remote image pull).                                                                                                                                                                                                                      |
+| **First deploy + smoke**    | **Proven**   | Staging → `@smoke` → production succeeded. Live: https://uapkb-staging.fly.dev , https://uapkb-production.fly.dev                                                                                                                                                                                           |
+| **Neon / real DB**          | **Deferred** | `DATABASE_URL` placeholder only; `/healthz` reports `not_configured`.                                                                                                                                                                                                                                       |
+
+### Remaining follow-ups (non-blocking)
+
+| Item            | Status   | Detail                                                                                                     |
+| --------------- | -------- | ---------------------------------------------------------------------------------------------------------- |
+| **pnpm audit**  | **Open** | `main` quality-checks fails on transitive vite advisory (high); bump vite when `minimumReleaseAge` allows. |
+| **APP_VERSION** | **Open** | fly secrets for build metadata still show `dev`/`unknown` in `/healthz`.                                   |
 
 ### Estimated fly.io cost
 
 ~**$3–4/month** (512 MB shared CPU; staging scale-to-zero, production `min_machines_running = 1`). See plan research notes / cost estimate session.
 
-### Suggested prompt for next session
-
-```
-Fix post-merge CI/deploy failures on ademartini/uapkb (flyctl action SHA, GHCR devcontainer push).
-Complete fly.io setup: verify apps exist, make GHCR package public, re-run deploy workflow.
-Read docs/plans/2026-06-14-001-feat-uapkb-scaffolding-plan.md Execution Progress.
-```
-
-**Plan status:** `active` — implementation merged; shipping (green `main` CI + first staging→smoke→production deploy) still open.
+**Plan status:** `active` — scaffold shipped; first staging→smoke→production deploy proven on `main`.
 
 ---
 
