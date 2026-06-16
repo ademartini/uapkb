@@ -1,0 +1,127 @@
+name: quality-checks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  devcontainer-build:
+    name: Devcontainer build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      - name: Build devcontainer and run production build
+        uses: devcontainers/ci@b63b30de439b47a52267f241112c5b453b673db5 # v0.3.1900000449
+        with:
+          configFile: .devcontainer/devcontainer.json
+          cacheFrom: ghcr.io/${{ github.repository }}/devcontainer
+          push: filter
+          refFilterForPush: refs/heads/main
+          imageName: ghcr.io/${{ github.repository }}/devcontainer
+          runCmd: pnpm install --frozen-lockfile && pnpm build
+
+  format-check:
+    name: Prettier
+    needs: devcontainer-build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      - uses: devcontainers/ci@b63b30de439b47a52267f241112c5b453b673db5 # v0.3.1900000449
+        with:
+          configFile: .devcontainer/devcontainer.json
+          cacheFrom: ghcr.io/${{ github.repository }}/devcontainer
+          push: never
+          runCmd: pnpm format:check
+
+  type-check:
+    name: TypeScript
+    needs: devcontainer-build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      - uses: devcontainers/ci@b63b30de439b47a52267f241112c5b453b673db5 # v0.3.1900000449
+        with:
+          configFile: .devcontainer/devcontainer.json
+          cacheFrom: ghcr.io/${{ github.repository }}/devcontainer
+          push: never
+          runCmd: pnpm typecheck
+
+  lint:
+    name: ESLint
+    needs: devcontainer-build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      - uses: devcontainers/ci@b63b30de439b47a52267f241112c5b453b673db5 # v0.3.1900000449
+        with:
+          configFile: .devcontainer/devcontainer.json
+          cacheFrom: ghcr.io/${{ github.repository }}/devcontainer
+          push: never
+          runCmd: pnpm lint
+
+  test:
+    name: Vitest
+    needs: devcontainer-build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      - uses: devcontainers/ci@b63b30de439b47a52267f241112c5b453b673db5 # v0.3.1900000449
+        with:
+          configFile: .devcontainer/devcontainer.json
+          cacheFrom: ghcr.io/${{ github.repository }}/devcontainer
+          push: never
+          runCmd: pnpm test:coverage
+
+  coverage-ratchet:
+    name: Coverage (repo ratchet)
+    needs: devcontainer-build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      - uses: devcontainers/ci@b63b30de439b47a52267f241112c5b453b673db5 # v0.3.1900000449
+        with:
+          configFile: .devcontainer/devcontainer.json
+          cacheFrom: ghcr.io/${{ github.repository }}/devcontainer
+          push: never
+          runCmd: |
+            pnpm test:coverage
+            git diff --exit-code vitest.config.ts || (
+              echo "Coverage improved but vitest.config.ts thresholds were not committed."
+              echo "Run: pnpm coverage:update"
+              exit 1
+            )
+
+  coverage-diff:
+    name: Coverage (diff)
+    needs: devcontainer-build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          fetch-depth: 0
+      - uses: devcontainers/ci@b63b30de439b47a52267f241112c5b453b673db5 # v0.3.1900000449
+        with:
+          configFile: .devcontainer/devcontainer.json
+          cacheFrom: ghcr.io/${{ github.repository }}/devcontainer
+          push: never
+          runCmd: pnpm test:coverage && pnpm coverage:diff
+
+  audit:
+    name: pnpm audit
+    needs: devcontainer-build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      - uses: devcontainers/ci@b63b30de439b47a52267f241112c5b453b673db5 # v0.3.1900000449
+        with:
+          configFile: .devcontainer/devcontainer.json
+          cacheFrom: ghcr.io/${{ github.repository }}/devcontainer
+          push: never
+          runCmd: pnpm audit:ci
