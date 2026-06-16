@@ -10,21 +10,47 @@ origin: docs/brainstorms/2026-06-13-uapkb-scaffolding-requirements.md
 
 ## Execution Progress
 
-**Last updated:** 2026-06-14
+**Last updated:** 2026-06-16
 
-**Scope history:** Main session directed stop after **U5** ([Stop at U5, update plan](345e635e-b1c6-4de9-b842-50d8e7aa3c51)). A later run ([Continue UAPKB scaffolding](d6446ff3-fed4-43b5-9bc0-a43b66d35b5e)) landed and locally verified **U6–U19** in the working tree. Implementation complete locally; **nothing committed**.
+**Repository:** https://github.com/ademartini/uapkb — scaffold merged via [PR #1](https://github.com/ademartini/uapkb/pull/1) (`feat/uapkb-scaffolding` → `main`, 2026-06-16).
 
-**Repo state:** Full scaffold present, uncommitted (`git` has no commits; `origin/main` unavailable).
+### Implementation status (U1–U19)
 
-| Unit       | Status                                   | Notes                                                                                            |
-| ---------- | ---------------------------------------- | ------------------------------------------------------------------------------------------------ |
-| **U1–U4**  | **Completed**                            | Per prior checkpoint; all local gates green.                                                     |
-| **U2**     | **Completed**                            | `esbuild` override clears high audit; `pnpm audit:ci` passes high/critical.                      |
-| **U5**     | **Completed** (local) / **Partial** (CI) | Thresholds + diff script; CI wiring (U15) unproven without push/PR.                              |
-| **U6–U18** | **Completed** (local, uncommitted)       | Devcontainer, deploy, smoke, docs — verified via `pnpm check`, `pnpm test:smoke`, parity script. |
-| **U19**    | **Completed** (local, uncommitted)       | `PRINCIPLES.md` audited.                                                                         |
+| Unit       | Status        | Notes                                                                                                                                                        |
+| ---------- | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **U1–U4**  | **Completed** | Next.js 16 scaffold, supply-chain hardening, lint/format ratchet, Vitest + placement.                                                                        |
+| **U5**     | **Completed** | Coverage auto-ratchet + diff gate; both proven in PR CI.                                                                                                     |
+| **U6–U18** | **Completed** | Devcontainer (image-only + compose Postgres for local), husky, Cursor config, `/healthz`, Dockerfile, Playwright smoke, fly.toml, CI/deploy workflows, docs. |
+| **U19**    | **Completed** | `PRINCIPLES.md` audited.                                                                                                                                     |
 
-**Next step:** commit when ready; configure fly.io secrets before first deploy.
+**CI on PR #1:** all 10 checks green (devcontainer build, Prettier, TypeScript, ESLint, Vitest, coverage ratchet, coverage diff, audit, production image build, node parity).
+
+**CI fixes landed in PR:** invalid Docker action SHAs; devcontainer switched from compose-embedded `dev` service to image-only (matches `xplor-test-app` pattern). Postgres remains `docker compose up -d db` for local dev.
+
+### Post-merge gaps (not done — start here next session)
+
+| Item                        | Status                | Detail                                                                                                                                                                                                                                                                                  |
+| --------------------------- | --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Deploy workflow**         | **Failing on `main`** | `superfly/flyctl-actions/setup-flyctl` SHA pin is invalid (`63de32d…`). Fix pin, re-run deploy.                                                                                                                                                                                         |
+| **GHCR devcontainer cache** | **Failing on `main`** | `devcontainer-build` job cannot push to `ghcr.io/ademartini/uapkb/devcontainer` (`unauthorized`). Likely needs repo **Settings → Actions → General → Workflow permissions → Read and write**, or a PAT with `write:packages`. Non-blocking for app deploy but blocks CI cache prebuild. |
+| **fly.io apps**             | **Manual**            | Create `uapkb-staging` and `uapkb-production` (`fly apps create`). User configured GitHub Environment secrets for deploy tokens (step 4).                                                                                                                                               |
+| **GHCR app image public**   | **Manual (step 5)**   | After first successful `build-image` job, set `ghcr.io/ademartini/uapkb` package visibility to **Public** so fly can pull deploy images.                                                                                                                                                |
+| **First deploy + smoke**    | **Not proven**        | Merge triggered deploy but it failed before staging; production not reached.                                                                                                                                                                                                            |
+| **Neon / real DB**          | **Deferred**          | `DATABASE_URL` placeholder only; `/healthz` reports `not_configured`.                                                                                                                                                                                                                   |
+
+### Estimated fly.io cost
+
+~**$3–4/month** (512 MB shared CPU; staging scale-to-zero, production `min_machines_running = 1`). See plan research notes / cost estimate session.
+
+### Suggested prompt for next session
+
+```
+Fix post-merge CI/deploy failures on ademartini/uapkb (flyctl action SHA, GHCR devcontainer push).
+Complete fly.io setup: verify apps exist, make GHCR package public, re-run deploy workflow.
+Read docs/plans/2026-06-14-001-feat-uapkb-scaffolding-plan.md Execution Progress.
+```
+
+**Plan status:** `active` — implementation merged; shipping (green `main` CI + first staging→smoke→production deploy) still open.
 
 ---
 
