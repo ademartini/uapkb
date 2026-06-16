@@ -54,7 +54,7 @@ jobs:
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
       - uses: superfly/flyctl-actions/setup-flyctl@fc53c09e1bc3be6f54706524e3b82c4f462f77be # v1.5
-      - run: flyctl deploy --image ghcr.io/${{ github.repository }}:${{ github.sha }} --config fly.staging.toml --remote-only
+      - run: flyctl deploy --image ghcr.io/${{ github.repository }}@${{ needs.build-image.outputs.digest }} --config fly.staging.toml --remote-only
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN_STAGING }}
       - id: status
@@ -94,6 +94,6 @@ jobs:
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
       - uses: superfly/flyctl-actions/setup-flyctl@fc53c09e1bc3be6f54706524e3b82c4f462f77be # v1.5
-      - run: flyctl deploy --image ghcr.io/${{ github.repository }}:${{ github.sha }} --config fly.production.toml --remote-only
+      - run: flyctl deploy --image ghcr.io/${{ github.repository }}@${{ needs.build-image.outputs.digest }} --config fly.production.toml --remote-only
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN_PRODUCTION }}
