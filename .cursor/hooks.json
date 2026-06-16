@@ -3,12 +3,15 @@
   "hooks": {
     "afterFileEdit": [
       {
-        "command": "pnpm exec prettier --write --ignore-unknown \"$CURSOR_FILE_PATH\" && pnpm exec eslint --fix --no-warn-ignored --no-error-on-unmatched-pattern \"$CURSOR_FILE_PATH\""
+        "command": ".cursor/hooks/after-file-edit.sh",
+        "timeout": 60
       }
     ],
     "stop": [
       {
-        "command": "./scripts/check.sh"
+        "command": ".cursor/hooks/stop.sh",
+        "loop_limit": 5,
+        "timeout": 120
       }
     ]
   }
