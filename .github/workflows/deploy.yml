@@ -88,7 +88,7 @@ jobs:
 
   deploy-production:
     name: Deploy production
-    needs: smoke
+    needs: [smoke, build-image]
     runs-on: ubuntu-latest
     environment: production
     steps:
