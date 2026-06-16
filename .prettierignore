@@ -4,6 +4,7 @@ build
 node_modules
 coverage
 pnpm-lock.yaml
+.devcontainer/devcontainer-lock.json
 .pnpm-store
 next-env.d.ts
 playwright-report
