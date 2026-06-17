@@ -25,6 +25,14 @@ Installed via `onCreateCommand` (`curl https://cursor.com/install`). Auth:
 - **Local:** `agent login` (credentials in named volume `cursor-config-${devcontainerId}`)
 - **CI:** `CURSOR_API_KEY` GitHub Environment secret (not repo-wide — fork PRs cannot read it)
 
+## GitHub CLI
+
+Installed via the official Dev Containers `github-cli` Feature. Auth:
+
+- **Local:** `gh auth login --hostname github.com --git-protocol ssh --web` (credentials in named volume `github-cli-config-${devcontainerId}`)
+- **Git credential helper:** `gh auth setup-git --hostname github.com` after login when HTTPS Git operations should use `gh`
+- **CI/headless:** set `GH_TOKEN` for the command invocation; do not bake GitHub tokens into the devcontainer image
+
 ## Private registry pattern
 
 See commented guidance in `.devcontainer/devcontainer.json` for forwarding host tokens via `remoteEnv`.
