@@ -36,3 +36,15 @@ Installed via the official Dev Containers `github-cli` Feature. Auth:
 ## Private registry pattern
 
 See commented guidance in `.devcontainer/devcontainer.json` for forwarding host tokens via `remoteEnv`.
+
+## Cursor Browser
+
+`pnpm dev` binds Next.js to `0.0.0.0:60517` so Cursor/VS Code port forwarding can expose the app from the container. Port `60517` is configured with `requireLocalPort: true`, making `http://localhost:60517` the stable URL for the Cursor browser, browser automation tools, and agents. The container's internal network URL is not portable across hosts.
+
+If Cursor shows a different random forwarded URL, port `60517` was already unavailable or the container needs to be rebuilt/reopened after config changes. Free the local port, then rebuild/reopen the devcontainer so the port forward can bind to `localhost:60517`.
+
+If the browser cannot reach the app:
+
+1. Confirm the dev server is running with `pnpm dev`.
+2. Confirm port `60517` is forwarded in the Ports panel.
+3. Confirm Cursor Browser Automation is enabled in Cursor settings.

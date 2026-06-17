@@ -14,7 +14,7 @@ npx @devcontainers/cli@latest exec --workspace-folder . pnpm test:run
 npx @devcontainers/cli@latest exec --workspace-folder . pnpm dev
 ```
 
-Open `http://localhost:3000`. The devcontainer starts Postgres via Docker Compose automatically.
+Open `http://localhost:60517`. The devcontainer starts Postgres via Docker Compose automatically.
 
 Cursor GUI "Reopen in Container" is supported as an optional convenience — see `docs/devcontainer.md`.
 
