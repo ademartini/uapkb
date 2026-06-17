@@ -14,10 +14,12 @@
   ],
   "updateContentCommand": "pnpm install --frozen-lockfile",
   "postCreateCommand": "bash -c 'if [ \"${CI:-}\" != true ]; then curl https://cursor.com/install -fsS | bash; fi; sudo chown -R node:node /home/node/.cursor /home/node/.config/gh'",
-  "forwardPorts": [3000, 5432],
+  "forwardPorts": [60517, 5432],
   "portsAttributes": {
-    "3000": {
+    "60517": {
       "label": "Next.js dev server",
+      "protocol": "http",
+      "requireLocalPort": true,
       "onAutoForward": "openPreview"
     },
     "5432": {
