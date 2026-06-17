@@ -48,3 +48,13 @@ Use `package.json` scripts — do not duplicate versions here.
 Prefer `@devcontainers/cli` (`devcontainer up` / `exec`) over GUI reopen. See `docs/devcontainer.md`.
 
 Cursor CLI: `agent login` locally; CI uses `CURSOR_API_KEY` (GitHub Environment secret).
+
+## Cursor Cloud specific instructions
+
+Dependencies are refreshed on startup via the update script (`pnpm install --frozen-lockfile`). The devcontainer/Docker Compose flow in the README is not used here; run commands directly. Postgres is not required — the app and `/healthz` report the database as `not_configured` (see `lib/health.ts`).
+
+Non-obvious caveats:
+
+- `pnpm dev` serves on port **60517** (not 3000), per `package.json`.
+- Next.js 16 allows only one dev server per project dir. `pnpm test:smoke` starts its own dev server (port 3100 via `playwright.config.ts`), so it fails with "Another next dev server is already running" if `pnpm dev` is up. Stop the running dev server before running smoke tests.
+- Smoke tests need a Playwright browser: `pnpm exec playwright install --with-deps chromium` (one-time; `--with-deps` needs root for system libs). Not in the update script to keep startup reliable.
