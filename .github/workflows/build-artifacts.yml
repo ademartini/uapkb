@@ -43,4 +43,16 @@ jobs:
             -e EXPECTED_NODE="$expected_node" \
             -e EXPECTED_PNPM="$expected_pnpm" \
             uapkb-cloud-agent:ci \
-            sh -lc 'case "$(node --version)" in "v${EXPECTED_NODE}".*) ;; *) node --version; exit 1;; esac && test "$(pnpm --version)" = "$EXPECTED_PNPM" && git --version && sudo -V'
+            sh -lc '
+              actual_node="$(node --version)"
+              actual_pnpm="$(pnpm --version)"
+              echo "node: $actual_node"
+              echo "pnpm: $actual_pnpm"
+              git --version
+              sudo -V | head -1
+              case "$actual_node" in
+                "v${EXPECTED_NODE}".*) ;;
+                *) echo "Expected Node major $EXPECTED_NODE"; exit 1 ;;
+              esac
+              test "$actual_pnpm" = "$EXPECTED_PNPM"
+            '

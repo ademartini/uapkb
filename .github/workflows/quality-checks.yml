@@ -30,7 +30,7 @@ jobs:
           push: filter
           refFilterForPush: refs/heads/main
           imageName: ghcr.io/${{ github.repository }}/devcontainer
-          runCmd: pnpm install --frozen-lockfile && pnpm build
+          runCmd: CI=true pnpm install --frozen-lockfile --store-dir node_modules/.pnpm-store && pnpm build
 
   format-check:
     name: Prettier
