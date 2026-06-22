@@ -2,7 +2,7 @@
 
 ## Prerequisites
 
-- Docker (for Postgres and devcontainer)
+- Docker (for the devcontainer and optional Postgres)
 - Node 22 + pnpm 10 (if not using devcontainer)
 
 Enable pnpm explicitly — do not assume corepack ships with your Node distribution:
@@ -23,7 +23,7 @@ npx @devcontainers/cli@latest exec --workspace-folder . pnpm dev
 
 ## Postgres
 
-Start the database (also started automatically by the devcontainer compose stack):
+Start the database only when working on database-backed behavior. The current devcontainer does not start Docker Compose automatically, and the app reports the database as `not_configured` when `DATABASE_URL` is unset.
 
 ```bash
 docker compose up -d db

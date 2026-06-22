@@ -1,6 +1,7 @@
 Dockerfile
 .dockerignore
 node_modules
+.pnpm-store
 .next
 .git
 .github
