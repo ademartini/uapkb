@@ -1,6 +1,10 @@
 # Shared PATH setup for Cursor hooks. Hooks run in a non-login shell, so profile
 # files like .zshrc may not have populated PATH.
-repo_root="${CURSOR_PROJECT_DIR:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+#
+# Project hooks can run while Cursor has multiple workspace roots open. In that
+# case CURSOR_PROJECT_DIR may point at a different repo, so anchor to the repo
+# that owns this hook script instead.
+repo_root="$(cd "${hook_dir:-$(dirname "${BASH_SOURCE[0]}")}/../.." && pwd)"
 cd "$repo_root"
 
 # Common binary locations for macOS hosts and Linux devcontainers.

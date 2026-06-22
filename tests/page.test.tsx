@@ -12,4 +12,9 @@ describe("Home", () => {
     render(<Home />);
     expect(screen.getByText(/AI-first reference repository/i)).toBeInTheDocument();
   });
+
+  it("renders a non-functional green button", () => {
+    render(<Home />);
+    expect(screen.getByRole("button", { name: "Do nothing" })).toBeInTheDocument();
+  });
 });
