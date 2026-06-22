@@ -6,6 +6,9 @@ cd "$(git rev-parse --show-toplevel)"
 echo "→ Prettier (format check)"
 pnpm format:check
 
+echo "→ Node parity"
+./scripts/check-node-parity.sh
+
 echo "→ ESLint (--max-warnings 0)"
 pnpm lint
 

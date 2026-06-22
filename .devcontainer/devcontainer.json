@@ -10,10 +10,12 @@
   "remoteUser": "node",
   "mounts": [
     "source=cursor-config-${devcontainerId},target=/home/node/.cursor,type=volume",
-    "source=github-cli-config-${devcontainerId},target=/home/node/.config/gh,type=volume"
+    "source=github-cli-config-${devcontainerId},target=/home/node/.config/gh,type=volume",
+    "source=node-modules-${devcontainerId},target=${containerWorkspaceFolder}/node_modules,type=volume"
   ],
-  "updateContentCommand": "pnpm install --frozen-lockfile",
-  "postCreateCommand": "bash -c 'if [ \"${CI:-}\" != true ]; then curl https://cursor.com/install -fsS | bash; fi; sudo chown -R node:node /home/node/.cursor /home/node/.config/gh'",
+  "onCreateCommand": "sudo chown -R node:node node_modules",
+  "updateContentCommand": "pnpm install --frozen-lockfile --store-dir node_modules/.pnpm-store",
+  "postCreateCommand": "bash .devcontainer/post-create.sh",
   "forwardPorts": [60517, 5432],
   "portsAttributes": {
     "60517": {
@@ -31,7 +33,8 @@
       "extensions": [
         "dbaeumer.vscode-eslint",
         "esbenp.prettier-vscode",
-        "bradlc.vscode-tailwindcss"
+        "bradlc.vscode-tailwindcss",
+        "ms-playwright.playwright"
       ]
     }
   }

@@ -20,7 +20,6 @@ jobs:
           context: .
           push: false
           tags: uapkb:ci
-          build-args: NODE_VERSION=22
 
   node-parity:
     name: Node version parity
@@ -28,3 +27,34 @@ jobs:
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
       - run: ./scripts/check-node-parity.sh
+
+  cloud-agent-environment:
+    name: Cursor Cloud Agent environment
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      - name: Build Cloud Agent image without secrets
+        run: docker build -t uapkb-cloud-agent:ci -f .cursor/Dockerfile .cursor
+      - name: Verify Cloud Agent image tools
+        run: |
+          expected_node="$(tr -d '[:space:]' < .nvmrc)"
+          expected_pnpm="$(node -p "require('./package.json').packageManager.split('@')[1]")"
+          docker run --rm \
+            -v "$PWD:/workspace:ro" \
+            -w /workspace \
+            -e EXPECTED_NODE="$expected_node" \
+            -e EXPECTED_PNPM="$expected_pnpm" \
+            uapkb-cloud-agent:ci \
+            sh -lc '
+              actual_node="$(node --version)"
+              actual_pnpm="$(pnpm --version)"
+              echo "node: $actual_node"
+              echo "pnpm: $actual_pnpm"
+              git --version
+              sudo -V | head -1
+              case "$actual_node" in
+                "v${EXPECTED_NODE}".*) ;;
+                *) echo "Expected Node major $EXPECTED_NODE"; exit 1 ;;
+              esac
+              test "$actual_pnpm" = "$EXPECTED_PNPM"
+            '
