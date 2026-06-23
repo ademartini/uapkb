@@ -52,6 +52,8 @@ jobs:
               echo "pnpm: $actual_pnpm"
               git --version
               curl --version | head -1
+              gpg --version | head -1
+              gpg-agent --version | head -1
               sudo -V | head -1
               case "$actual_node" in
                 "v${EXPECTED_NODE}".*) ;;
